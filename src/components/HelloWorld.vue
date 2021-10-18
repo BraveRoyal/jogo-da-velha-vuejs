@@ -1,60 +1,148 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div>
+    <div class="text-center" style="color: white; padding: 20px 0px">
+      <h2>Jogo Da Velha</h2>
+    </div>
+    <div class="text-center">
+      <div class="flex game-block">
+        <div v-for="(g, index) in game" :key="index">
+          <div
+            class="game-option"
+            v-for="(g2, index2) in game[index]"
+            :key="index2"
+          >
+            <template v-if="g2.isTrue">
+              <p style="font-size: 50px">{{ g2.value }}</p>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="text-end link-button">
+        <router-link to="/singleplayer"
+          ><b-button>Um Jogador</b-button></router-link
+        >
+      </div>
+      <div class="text-start link-button">
+        <router-link to="/multiplayer"
+          ><b-button>Dois Jogadores</b-button></router-link
+        >
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  name: "HelloWorld",
+  data() {
+    return {
+      time: 1,
+      game: [
+        [
+          { isTrue: false, value: "X" },
+          { isTrue: false, value: "O" },
+          { isTrue: false, value: "X" },
+        ],
+        [
+          { isTrue: false, value: "O" },
+          { isTrue: false, value: "O" },
+          { isTrue: false, value: "X" },
+        ],
+        [
+          { isTrue: false, value: "O" },
+          { isTrue: false, value: "O" },
+          { isTrue: false, value: "X" },
+        ],
+      ],
+    };
+  },
+  created() {
+    this.gameSimulator();
+  },
+  methods: {
+    gameSimulator() {
+      if (!this.t) {
+        this.t = setInterval(() => {
+          this._data.game.push([]);
+          this._data.game.pop();
+          switch (this._data.time) {
+            case 1:
+              this._data.time = 2;
+              this._data.game[0][0].isTrue = true;
+              break;
+            case 2:
+              this._data.time = 3;
+              this._data.game[2][0].isTrue = true;
+              break;
+            case 3:
+              this._data.time = 4;
+              this._data.game[2][2].isTrue = true;
+              break;
+            case 4:
+              this._data.time = 5;
+              this._data.game[1][1].isTrue = true;
+              break;
+            case 5:
+              this._data.time = 6;
+              this._data.game[0][2].isTrue = true;
+              break;
+            case 6:
+              this._data.time = 7;
+              this._data.game[0][1].isTrue = true;
+              break;
+            case 7:
+              this._data.time = 8;
+              this._data.game[1][2].isTrue = true;
+              break;
+            case 8:
+              this._data.time = 1;
+              this._data.game.forEach((element, index) => {
+                this._data.game[index].forEach((element) => {
+                  element.isTrue = false;
+                });
+              });
+              break;
+            default:
+              break;
+          }
+        }, 3000);
+      } else {
+        clearInterval(this.t);
+      }
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.link-button {
+  margin: 10px;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+.game-option {
+  margin: 10px 5px;
+  width: 80px;
+  height: 80px;
+  background-color: white;
+  border-radius: 20px;
 }
-a {
-  color: #42b983;
+.game-block {
+  width: 350px;
+  height: 350px;
+  margin: 20px auto;
+  padding: 20px 0px;
+  background-color: rgba(0, 0, 0, 0.199);
+  border: 2px solid black;
+  border-radius: 20px;
+}
+.game-option p {
+  color: black;
 }
 </style>
